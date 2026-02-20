@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Usage Monitor</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-left">
+        <h1>Claude Usage</h1>
+      </div>
+      <div class="header-right">
+        <span id="plan-badge" class="badge">Checking...</span>
+      </div>
+    </header>
+
+    <div id="login-warning" class="hidden">
+      <p class="warning-text">claude.ai にログインしてください</p>
+      <a href="https://claude.ai/login" target="_blank" class="login-link">ログインページへ</a>
+    </div>
+
+    <div id="main-content">
+      <section class="usage-section">
+        <h2>5時間セッション</h2>
+        <div class="progress-container">
+          <div class="progress-bar-bg">
+            <div id="five-hour-bar" class="progress-bar" style="width: 0%"></div>
+          </div>
+          <div class="progress-info">
+            <span id="five-hour-val">0%</span>
+            <span id="five-hour-reset" class="reset-time">--分後にリセット</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="usage-section">
+        <h2>週間制限 (全体)</h2>
+        <div class="progress-container">
+          <div class="progress-bar-bg">
+            <div id="seven-day-bar" class="progress-bar" style="width: 0%"></div>
+          </div>
+          <div class="progress-info">
+            <span id="seven-day-val">0%</span>
+            <span id="seven-day-reset" class="reset-time">--日後にリセット</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="sonnet-section" class="usage-section hidden">
+        <h2>週間制限 (Sonnet)</h2>
+        <div class="progress-container">
+          <div class="progress-bar-bg">
+            <div id="sonnet-bar" class="progress-bar" style="width: 0%"></div>
+          </div>
+          <div class="progress-info">
+            <span id="sonnet-val">0%</span>
+            <span id="sonnet-reset" class="reset-time">--日後にリセット</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="opus-section" class="usage-section hidden">
+        <h2>週間制限 (Opus)</h2>
+        <div class="progress-container">
+            <div class="progress-bar-bg">
+                <div id="opus-bar" class="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-info">
+                <span id="opus-val">0%</span>
+                <span id="opus-reset" class="reset-time">--日後にリセット</span>
+            </div>
+        </div>
+      </section>
+
+      <div id="status-message" class="status-message"></div>
+    </div>
+
+    <footer class="footer">
+      <span id="last-updated">更新: --:--</span>
+      <button id="refresh-btn" class="refresh-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 4v6h-6"></path>
+          <path d="M1 20v-6h6"></path>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+      </button>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
