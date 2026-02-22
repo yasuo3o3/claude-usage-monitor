@@ -52,17 +52,17 @@ async function updateUI() {
 
     // Update 5-Hour Session
     const fiveHour = usage.five_hour || {};
-    updateProgressBar('five-hour', fiveHour.utilization || 0, fiveHour.resets_at);
+    updateProgressBar('five-hour', fiveHour.utilization || 0, fiveHour.resets_at, 5);
 
     // Update Weekly (All)
     const sevenDay = usage.seven_day || {};
-    updateProgressBar('seven-day', sevenDay.utilization || 0, sevenDay.resets_at);
+    updateProgressBar('seven-day', sevenDay.utilization || 0, sevenDay.resets_at, 168);
 
     // Update Sonnet
     const sonnet = usage.seven_day_sonnet;
     if (sonnet) {
         document.getElementById('sonnet-section').classList.remove('hidden');
-        updateProgressBar('sonnet', sonnet.utilization || 0, sonnet.resets_at);
+        updateProgressBar('sonnet', sonnet.utilization || 0, sonnet.resets_at, 168);
     } else {
         document.getElementById('sonnet-section').classList.add('hidden');
     }
@@ -71,7 +71,7 @@ async function updateUI() {
     const opus = usage.seven_day_opus;
     if (opus) {
         document.getElementById('opus-section').classList.remove('hidden');
-        updateProgressBar('opus', opus.utilization || 0, opus.resets_at);
+        updateProgressBar('opus', opus.utilization || 0, opus.resets_at, 168);
     } else {
         document.getElementById('opus-section').classList.add('hidden');
     }
@@ -99,7 +99,36 @@ function updatePlanBadge(tier) {
     }
 }
 
-function updateProgressBar(idPrefix, utilization, resetsAt) {
+/**
+ * Calculate expected utilization based on elapsed time
+ * @param {string|null} resetsAt - ISO timestamp when the limit resets
+ * @param {number} totalWindowHours - Total window in hours (5 for five_hour, 168 for seven_day)
+ * @returns {number|null} Expected utilization percentage (0-100) or null if not calculable
+ */
+function calculateExpectedUtilization(resetsAt, totalWindowHours) {
+    if (!resetsAt) return null;
+
+    const resetDate = new Date(resetsAt);
+    const now = new Date();
+    const diffMs = resetDate - now;
+
+    // If already reset (past the reset time), expected utilization is not meaningful
+    if (diffMs <= 0) return null;
+
+    const totalWindowMs = totalWindowHours * 60 * 60 * 1000;
+    const timeRemainingMs = diffMs;
+    const timeElapsedMs = totalWindowMs - timeRemainingMs;
+
+    // If elapsed time is negative, the window hasn't started yet (edge case)
+    if (timeElapsedMs <= 0) return null;
+
+    const elapsedRatio = timeElapsedMs / totalWindowMs; // 0 to 1
+    const expectedUtilization = elapsedRatio * 100; // Scale to 0-100
+
+    return expectedUtilization;
+}
+
+function updateProgressBar(idPrefix, utilization, resetsAt, totalWindowHours) {
     const bar = document.getElementById(`${idPrefix}-bar`);
     const valText = document.getElementById(`${idPrefix}-val`);
     const resetText = document.getElementById(`${idPrefix}-reset`);
@@ -108,9 +137,29 @@ function updateProgressBar(idPrefix, utilization, resetsAt) {
     const pct = Math.min(100, Math.max(0, utilization));
 
     bar.style.width = `${pct}%`;
-    valText.textContent = `${Math.round(pct)}%`;
 
-    // Color logic
+    // Calculate expected utilization and display with actual
+    const expected = calculateExpectedUtilization(resetsAt, totalWindowHours);
+    if (expected !== null) {
+        const paceDiff = pct - expected;
+        const isOverPace = paceDiff > 0.5;
+
+        // Display format: "42% (35%)"
+        valText.textContent = `${Math.round(pct)}% (${Math.round(expected)}%)`;
+
+        // Color based on pace
+        if (isOverPace) {
+            valText.className = 'pace-over';
+        } else {
+            valText.className = 'pace-ok';
+        }
+    } else {
+        // No expected value, show only actual
+        valText.textContent = `${Math.round(pct)}%`;
+        valText.className = '';
+    }
+
+    // Color logic for progress bar
     if (pct > 80) {
         bar.style.backgroundColor = '#F44336'; // Red
     } else if (pct > 50) {
