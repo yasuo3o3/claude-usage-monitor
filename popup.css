@@ -156,3 +156,23 @@ body {
 .login-link:hover {
   text-decoration: underline;
 }
+
+.claude-link {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-size: 11px;
+  transition: color 0.2s ease;
+}
+
+.claude-link:hover {
+  color: var(--text-main);
+  text-decoration: underline;
+}
+
+.pace-over {
+  color: var(--danger);
+}
+
+.pace-ok {
+  color: var(--success);
+}
