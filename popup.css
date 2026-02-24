@@ -2,6 +2,7 @@
   --bg-color: #1a1a1a;
   --text-main: #ffffff;
   --text-sub: #a1a1a1;
+  --text-heading: #c1c1c1;
   --accent-color: #d97757;
   /* Claude-ish orange/brown */
   --progress-bg: #333333;
@@ -23,7 +24,7 @@ body {
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .header {
@@ -51,8 +52,12 @@ body {
 
 .usage-section h2 {
   font-size: 14px;
-  margin: 0 0 8px 0;
-  color: var(--text-sub);
+  margin: 0 0 4px 0;
+  color: var(--text-heading);
+}
+
+.usage-section:not(:first-child) h2 {
+  margin-top: 10px;
 }
 
 .progress-container {
@@ -67,13 +72,25 @@ body {
   background-color: var(--progress-bg);
   border-radius: 4px;
   overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-expected {
+  position: absolute;
+  height: 100%;
+  background-color: rgba(76, 175, 80, 0.15);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  z-index: 0;
 }
 
 .progress-bar {
+  position: relative;
   height: 100%;
   background: var(--success);
   border-radius: 4px;
   transition: width 0.3s ease, background-color 0.3s ease;
+  z-index: 1;
 }
 
 .progress-info {
@@ -175,4 +192,24 @@ body {
 
 .pace-ok {
   color: var(--success);
+}
+
+.bar-red {
+  color: var(--danger);
+}
+
+.bar-yellow {
+  color: var(--warning);
+}
+
+.bar-green {
+  color: var(--text-main);
+}
+
+.actual-pct {
+  color: var(--text-main);
+}
+
+.expected-pct {
+  color: var(--text-sub);
 }

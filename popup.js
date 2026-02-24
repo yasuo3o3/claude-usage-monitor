@@ -130,6 +130,7 @@ function calculateExpectedUtilization(resetsAt, totalWindowHours) {
 
 function updateProgressBar(idPrefix, utilization, resetsAt, totalWindowHours) {
     const bar = document.getElementById(`${idPrefix}-bar`);
+    const expectedBar = document.getElementById(`${idPrefix}-expected-bar`);
     const valText = document.getElementById(`${idPrefix}-val`);
     const resetText = document.getElementById(`${idPrefix}-reset`);
 
@@ -141,31 +142,40 @@ function updateProgressBar(idPrefix, utilization, resetsAt, totalWindowHours) {
     // Calculate expected utilization and display with actual
     const expected = calculateExpectedUtilization(resetsAt, totalWindowHours);
     if (expected !== null) {
-        const paceDiff = pct - expected;
-        const isOverPace = paceDiff > 0.5;
-
-        // Display format: "42% (35%)"
-        valText.textContent = `${Math.round(pct)}% (${Math.round(expected)}%)`;
-
-        // Color based on pace
-        if (isOverPace) {
-            valText.className = 'pace-over';
-        } else {
-            valText.className = 'pace-ok';
-        }
+        // Display format: "42% (35%)" with separate styling
+        valText.innerHTML = `<span class="actual-pct">${Math.round(pct)}%</span> <span class="expected-pct">(${Math.round(expected)}%)</span>`;
     } else {
         // No expected value, show only actual
-        valText.textContent = `${Math.round(pct)}%`;
-        valText.className = '';
+        valText.innerHTML = `<span class="actual-pct">${Math.round(pct)}%</span>`;
     }
 
-    // Color logic for progress bar
-    if (pct > 80) {
+    // Color logic for progress bar based on utilization
+    let actualPctColor;
+    if (pct >= 100) {
         bar.style.backgroundColor = '#F44336'; // Red
-    } else if (pct > 50) {
+        actualPctColor = 'bar-red';
+    } else if (pct >= 90) {
         bar.style.backgroundColor = '#FFC107'; // Yellow/Amber
+        actualPctColor = 'bar-yellow';
     } else {
         bar.style.backgroundColor = '#4CAF50'; // Green
+        actualPctColor = 'bar-green';
+    }
+
+    // Apply warning color to actual percentage text (yellow/red only)
+    const actualPctSpan = valText.querySelector('.actual-pct');
+    if (actualPctSpan) {
+        actualPctSpan.classList.remove('bar-red', 'bar-yellow', 'bar-green');
+        actualPctSpan.classList.add(actualPctColor);
+    }
+
+    // Show expected utilization bar (except when red/100%+)
+    if (expected !== null && pct < 100) {
+        const expectedPct = Math.min(100, Math.max(0, expected));
+        expectedBar.style.width = `${expectedPct}%`;
+        expectedBar.style.display = 'block';
+    } else {
+        expectedBar.style.display = 'none';
     }
 
     // Reset time logic
