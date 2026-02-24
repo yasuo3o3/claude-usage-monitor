@@ -159,14 +159,22 @@ function updateProgressBar(idPrefix, utilization, resetsAt, totalWindowHours) {
         valText.className = '';
     }
 
-    // Color logic for progress bar
-    if (pct > 80) {
+    // Color logic for progress bar based on utilization
+    let barColorClass;
+    if (pct >= 100) {
         bar.style.backgroundColor = '#F44336'; // Red
-    } else if (pct > 50) {
+        barColorClass = 'bar-red';
+    } else if (pct >= 90) {
         bar.style.backgroundColor = '#FFC107'; // Yellow/Amber
+        barColorClass = 'bar-yellow';
     } else {
         bar.style.backgroundColor = '#4CAF50'; // Green
+        barColorClass = 'bar-green';
     }
+
+    // Apply same color to percentage text
+    valText.classList.remove('bar-red', 'bar-yellow', 'bar-green', 'pace-over', 'pace-ok');
+    valText.classList.add(barColorClass);
 
     // Reset time logic
     if (resetsAt) {
