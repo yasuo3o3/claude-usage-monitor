@@ -181,7 +181,12 @@ function updateProgressBar(idPrefix, utilization, resetsAt, totalWindowHours) {
             const diffDays = Math.floor(diffHours / 24);
 
             if (diffDays > 0) {
-                resetText.textContent = `${diffDays}日後にリセット`;
+                const remHours = diffHours % 24;
+                if (remHours > 0) {
+                    resetText.textContent = `${diffDays}日と${remHours}時間後にリセット`;
+                } else {
+                    resetText.textContent = `${diffDays}日後にリセット`;
+                }
             } else if (diffHours > 0) {
                 resetText.textContent = `${diffHours}時間${remMins}分後にリセット`;
             } else {
