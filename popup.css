@@ -2,6 +2,7 @@
   --bg-color: #1a1a1a;
   --text-main: #ffffff;
   --text-sub: #a1a1a1;
+  --text-heading: #c1c1c1;
   --accent-color: #d97757;
   /* Claude-ish orange/brown */
   --progress-bg: #333333;
@@ -52,7 +53,7 @@ body {
 .usage-section h2 {
   font-size: 14px;
   margin: 0 0 4px 0;
-  color: var(--text-sub);
+  color: var(--text-heading);
 }
 
 .usage-section:not(:first-child) h2 {
@@ -203,4 +204,12 @@ body {
 
 .bar-green {
   color: var(--text-main);
+}
+
+.actual-pct {
+  color: var(--text-main);
+}
+
+.expected-pct {
+  color: var(--text-sub);
 }
