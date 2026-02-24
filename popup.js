@@ -1,3 +1,6 @@
+const WINDOW_HOURS_FIVE = 5;
+const WINDOW_HOURS_SEVEN_DAYS = 168;
+
 const PLAN_MAP = {
     "default_claude_max_20x": { name: "Max 20x" },
     "default_claude_max_5x": { name: "Max 5x" },
@@ -52,17 +55,17 @@ async function updateUI() {
 
     // Update 5-Hour Session
     const fiveHour = usage.five_hour || {};
-    updateProgressBar('five-hour', fiveHour.utilization || 0, fiveHour.resets_at, 5);
+    updateProgressBar('five-hour', fiveHour.utilization || 0, fiveHour.resets_at, WINDOW_HOURS_FIVE);
 
     // Update Weekly (All)
     const sevenDay = usage.seven_day || {};
-    updateProgressBar('seven-day', sevenDay.utilization || 0, sevenDay.resets_at, 168);
+    updateProgressBar('seven-day', sevenDay.utilization || 0, sevenDay.resets_at, WINDOW_HOURS_SEVEN_DAYS);
 
     // Update Sonnet
     const sonnet = usage.seven_day_sonnet;
     if (sonnet) {
         document.getElementById('sonnet-section').classList.remove('hidden');
-        updateProgressBar('sonnet', sonnet.utilization || 0, sonnet.resets_at, 168);
+        updateProgressBar('sonnet', sonnet.utilization || 0, sonnet.resets_at, WINDOW_HOURS_SEVEN_DAYS);
     } else {
         document.getElementById('sonnet-section').classList.add('hidden');
     }
@@ -71,7 +74,7 @@ async function updateUI() {
     const opus = usage.seven_day_opus;
     if (opus) {
         document.getElementById('opus-section').classList.remove('hidden');
-        updateProgressBar('opus', opus.utilization || 0, opus.resets_at, 168);
+        updateProgressBar('opus', opus.utilization || 0, opus.resets_at, WINDOW_HOURS_SEVEN_DAYS);
     } else {
         document.getElementById('opus-section').classList.add('hidden');
     }
