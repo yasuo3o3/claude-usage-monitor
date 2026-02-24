@@ -211,8 +211,14 @@ function updateProgressBar(idPrefix, utilization, resetsAt, totalWindowHours) {
         actualPctSpan.classList.add(actualPctColor);
     }
 
-    // Show expected utilization bar (except when red/100%+)
-    if (expected !== null && pct < 100) {
+    if (actualPctColor === 'bar-yellow') {
+        expectedBar.style.backgroundColor = 'rgba(255, 193, 7, 0.3)';
+    } else if (actualPctColor === 'bar-green') {
+        expectedBar.style.backgroundColor = 'rgba(76, 175, 80, 0.3)';
+    }
+
+    // Show expected utilization bar (except when red/100%+ or when red)
+    if (expected !== null && pct < 100 && actualPctColor !== 'bar-red') {
         const expectedPct = Math.min(100, Math.max(0, expected));
         expectedBar.style.width = `${expectedPct}%`;
         expectedBar.style.display = 'block';
