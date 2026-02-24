@@ -130,6 +130,7 @@ function calculateExpectedUtilization(resetsAt, totalWindowHours) {
 
 function updateProgressBar(idPrefix, utilization, resetsAt, totalWindowHours) {
     const bar = document.getElementById(`${idPrefix}-bar`);
+    const expectedBar = document.getElementById(`${idPrefix}-expected-bar`);
     const valText = document.getElementById(`${idPrefix}-val`);
     const resetText = document.getElementById(`${idPrefix}-reset`);
 
@@ -175,6 +176,15 @@ function updateProgressBar(idPrefix, utilization, resetsAt, totalWindowHours) {
     // Apply same color to percentage text
     valText.classList.remove('bar-red', 'bar-yellow', 'bar-green', 'pace-over', 'pace-ok');
     valText.classList.add(barColorClass);
+
+    // Show expected utilization bar (except when red/100%+)
+    if (expected !== null && pct < 100) {
+        const expectedPct = Math.min(100, Math.max(0, expected));
+        expectedBar.style.width = `${expectedPct}%`;
+        expectedBar.style.display = 'block';
+    } else {
+        expectedBar.style.display = 'none';
+    }
 
     // Reset time logic
     if (resetsAt) {
