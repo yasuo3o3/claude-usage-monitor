@@ -51,12 +51,12 @@ body {
 
 .usage-section h2 {
   font-size: 14px;
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
   color: var(--text-sub);
 }
 
 .usage-section:not(:first-child) h2 {
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .progress-container {
