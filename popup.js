@@ -142,40 +142,32 @@ function updateProgressBar(idPrefix, utilization, resetsAt, totalWindowHours) {
     // Calculate expected utilization and display with actual
     const expected = calculateExpectedUtilization(resetsAt, totalWindowHours);
     if (expected !== null) {
-        const paceDiff = pct - expected;
-        const isOverPace = paceDiff > 0.5;
-
-        // Display format: "42% (35%)"
-        valText.textContent = `${Math.round(pct)}% (${Math.round(expected)}%)`;
-
-        // Color based on pace
-        if (isOverPace) {
-            valText.className = 'pace-over';
-        } else {
-            valText.className = 'pace-ok';
-        }
+        // Display format: "42% (35%)" with separate styling
+        valText.innerHTML = `<span class="actual-pct">${Math.round(pct)}%</span> <span class="expected-pct">(${Math.round(expected)}%)</span>`;
     } else {
         // No expected value, show only actual
-        valText.textContent = `${Math.round(pct)}%`;
-        valText.className = '';
+        valText.innerHTML = `<span class="actual-pct">${Math.round(pct)}%</span>`;
     }
 
     // Color logic for progress bar based on utilization
-    let barColorClass;
+    let actualPctColor;
     if (pct >= 100) {
         bar.style.backgroundColor = '#F44336'; // Red
-        barColorClass = 'bar-red';
+        actualPctColor = 'bar-red';
     } else if (pct >= 90) {
         bar.style.backgroundColor = '#FFC107'; // Yellow/Amber
-        barColorClass = 'bar-yellow';
+        actualPctColor = 'bar-yellow';
     } else {
         bar.style.backgroundColor = '#4CAF50'; // Green
-        barColorClass = 'bar-green';
+        actualPctColor = 'bar-green';
     }
 
-    // Apply same color to percentage text
-    valText.classList.remove('bar-red', 'bar-yellow', 'bar-green', 'pace-over', 'pace-ok');
-    valText.classList.add(barColorClass);
+    // Apply warning color to actual percentage text (yellow/red only)
+    const actualPctSpan = valText.querySelector('.actual-pct');
+    if (actualPctSpan) {
+        actualPctSpan.classList.remove('bar-red', 'bar-yellow', 'bar-green');
+        actualPctSpan.classList.add(actualPctColor);
+    }
 
     // Show expected utilization bar (except when red/100%+)
     if (expected !== null && pct < 100) {
