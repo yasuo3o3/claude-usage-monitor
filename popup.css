@@ -23,7 +23,7 @@ body {
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .header {
@@ -175,4 +175,16 @@ body {
 
 .pace-ok {
   color: var(--success);
+}
+
+.bar-red {
+  color: var(--danger);
+}
+
+.bar-yellow {
+  color: var(--warning);
+}
+
+.bar-green {
+  color: var(--text-main);
 }
