@@ -55,6 +55,10 @@ body {
   color: var(--text-sub);
 }
 
+.usage-section:not(:first-child) h2 {
+  margin-top: 8px;
+}
+
 .progress-container {
   display: flex;
   flex-direction: column;
