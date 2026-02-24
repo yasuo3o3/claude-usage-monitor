@@ -151,15 +151,57 @@ function updateProgressBar(idPrefix, utilization, resetsAt, totalWindowHours) {
 
     // Color logic for progress bar based on utilization
     let actualPctColor;
-    if (pct >= 100) {
-        bar.style.backgroundColor = '#F44336'; // Red
-        actualPctColor = 'bar-red';
-    } else if (pct >= 90) {
-        bar.style.backgroundColor = '#FFC107'; // Yellow/Amber
-        actualPctColor = 'bar-yellow';
+    if (expected !== null) {
+        const paceRatio = pct / expected;
+        if (idPrefix === 'five-hour') {
+            if (pct < 60) {
+                bar.style.backgroundColor = '#4CAF50';
+                actualPctColor = 'bar-green';
+            } else if (paceRatio <= 1.0) {
+                bar.style.backgroundColor = '#FFC107'; // Yellow/Amber
+                actualPctColor = 'bar-yellow';
+            } else {
+                bar.style.backgroundColor = '#F44336'; // Red
+                actualPctColor = 'bar-red';
+            }
+        } else {
+            // Seven day variations
+            if (paceRatio <= 0.8) {
+                bar.style.backgroundColor = '#4CAF50';
+                actualPctColor = 'bar-green';
+            } else if (paceRatio <= 1.0) {
+                bar.style.backgroundColor = '#FFC107';
+                actualPctColor = 'bar-yellow';
+            } else {
+                bar.style.backgroundColor = '#F44336';
+                actualPctColor = 'bar-red';
+            }
+        }
     } else {
-        bar.style.backgroundColor = '#4CAF50'; // Green
-        actualPctColor = 'bar-green';
+        // Fallback Logic when expected is null
+        if (idPrefix === 'five-hour') {
+            if (pct >= 100) {
+                bar.style.backgroundColor = '#F44336';
+                actualPctColor = 'bar-red';
+            } else if (pct >= 90) {
+                bar.style.backgroundColor = '#FFC107';
+                actualPctColor = 'bar-yellow';
+            } else {
+                bar.style.backgroundColor = '#4CAF50';
+                actualPctColor = 'bar-green';
+            }
+        } else {
+            if (pct >= 100) {
+                bar.style.backgroundColor = '#F44336';
+                actualPctColor = 'bar-red';
+            } else if (pct >= 80) {
+                bar.style.backgroundColor = '#FFC107';
+                actualPctColor = 'bar-yellow';
+            } else {
+                bar.style.backgroundColor = '#4CAF50';
+                actualPctColor = 'bar-green';
+            }
+        }
     }
 
     // Apply warning color to actual percentage text (yellow/red only)

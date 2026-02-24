@@ -28,13 +28,13 @@ async function fetchUsageData() {
     try {
         const org = await getOrganization();
         if (!org) {
-            updateBadge('!', '#FF0000');
+            updateBadge('!', '#888888');
             return;
         }
 
         const usage = await getUsage(org.uuid);
         if (!usage) {
-            updateBadge('!', '#FF0000');
+            updateBadge('!', '#888888');
             return;
         }
 
@@ -48,7 +48,7 @@ async function fetchUsageData() {
 
     } catch (error) {
         console.error('Failed to fetch data:', error);
-        updateBadge('!', '#FF0000');
+        updateBadge('!', '#888888');
     }
 }
 
@@ -78,6 +78,55 @@ async function getUsage(orgUuid) {
 
 let badgeIntervalId = null;
 
+function calculateExpectedUtilization(resetsAt, totalWindowHours) {
+    if (!resetsAt) return null;
+
+    const resetDate = new Date(resetsAt);
+    const now = new Date();
+    const diffMs = resetDate - now;
+
+    if (diffMs <= 0) return null;
+
+    const totalWindowMs = totalWindowHours * 60 * 60 * 1000;
+    const timeRemainingMs = diffMs;
+    const timeElapsedMs = totalWindowMs - timeRemainingMs;
+
+    if (timeElapsedMs <= 0) return null;
+
+    return (timeElapsedMs / totalWindowMs) * 100;
+}
+
+function getFiveHourBadgeData(utilization, resetsAt) {
+    const expected = calculateExpectedUtilization(resetsAt, 5);
+
+    if (expected === null) {
+        if (utilization >= 100) return { color: '#F44336', show: true };
+        if (utilization >= 90) return { color: '#FFC107', show: true };
+        return { show: false };
+    }
+
+    if (utilization < 60) return { show: false };
+
+    const paceRatio = utilization / expected;
+    if (paceRatio > 1.0) return { color: '#F44336', show: true };
+    return { color: '#FFC107', show: true };
+}
+
+function getSevenDayBadgeData(utilization, resetsAt) {
+    const expected = calculateExpectedUtilization(resetsAt, 168);
+
+    if (expected === null) {
+        if (utilization >= 100) return { color: '#F44336', show: true };
+        if (utilization >= 80) return { color: '#FFC107', show: true };
+        return { show: false };
+    }
+
+    const paceRatio = utilization / expected;
+    if (paceRatio <= 0.8) return { show: false };
+    if (paceRatio > 1.0) return { color: '#F44336', show: true };
+    return { color: '#FFC107', show: true };
+}
+
 function updateBadgeFromUtilization(usage) {
     // Clear any existing interval
     if (badgeIntervalId) {
@@ -86,28 +135,29 @@ function updateBadgeFromUtilization(usage) {
     }
 
     const fiveHourUtil = Math.round(usage.five_hour?.utilization || 0);
+    const fiveHourResetsAt = usage.five_hour?.resets_at || null;
     const sevenDayUtil = Math.round(usage.seven_day?.utilization || 0);
+    const sevenDayResetsAt = usage.seven_day?.resets_at || null;
 
     let showFiveHour = true;
 
     // Helper function to update actual badge API
     function renderBadge() {
         if (showFiveHour) {
-            const color = getColorForUtilization(fiveHourUtil);
-            // Hide badge if 0
-            if (fiveHourUtil <= 50) {
+            const badgeData = getFiveHourBadgeData(fiveHourUtil, fiveHourResetsAt);
+            if (!badgeData.show) {
                 chrome.action.setBadgeText({ text: '' });
             } else {
                 chrome.action.setBadgeText({ text: `H${fiveHourUtil}` });
-                chrome.action.setBadgeBackgroundColor({ color: color });
+                chrome.action.setBadgeBackgroundColor({ color: badgeData.color });
             }
         } else {
-            const color = getColorForUtilization(sevenDayUtil);
-            if (sevenDayUtil <= 50) {
+            const badgeData = getSevenDayBadgeData(sevenDayUtil, sevenDayResetsAt);
+            if (!badgeData.show) {
                 chrome.action.setBadgeText({ text: '' });
             } else {
                 chrome.action.setBadgeText({ text: `W${sevenDayUtil}` });
-                chrome.action.setBadgeBackgroundColor({ color: color });
+                chrome.action.setBadgeBackgroundColor({ color: badgeData.color });
             }
         }
         showFiveHour = !showFiveHour;
