@@ -141,12 +141,20 @@ function updateProgressBar(idPrefix, utilization, resetsAt, totalWindowHours) {
 
     // Calculate expected utilization and display with actual
     const expected = calculateExpectedUtilization(resetsAt, totalWindowHours);
+    valText.textContent = ''; // Clear previous content
+
+    const actualSpan = document.createElement('span');
+    actualSpan.className = 'actual-pct';
+    actualSpan.textContent = `${Math.round(pct)}%`;
+    valText.appendChild(actualSpan);
+
     if (expected !== null) {
         // Display format: "42% (35%)" with separate styling
-        valText.innerHTML = `<span class="actual-pct">${Math.round(pct)}%</span> <span class="expected-pct">(${Math.round(expected)}%)</span>`;
-    } else {
-        // No expected value, show only actual
-        valText.innerHTML = `<span class="actual-pct">${Math.round(pct)}%</span>`;
+        valText.appendChild(document.createTextNode(' '));
+        const expectedSpan = document.createElement('span');
+        expectedSpan.className = 'expected-pct';
+        expectedSpan.textContent = `(${Math.round(expected)}%)`;
+        valText.appendChild(expectedSpan);
     }
 
     // Color logic for progress bar based on utilization

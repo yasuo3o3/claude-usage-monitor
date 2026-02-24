@@ -1,5 +1,7 @@
 const ALARM_NAME = 'fetch_usage';
 const API_BASE = 'https://claude.ai/api';
+const WINDOW_HOURS_FIVE = 5;
+const WINDOW_HOURS_SEVEN_DAYS = 168;
 
 chrome.alarms.create(ALARM_NAME, { periodInMinutes: 5 });
 
@@ -97,7 +99,7 @@ function calculateExpectedUtilization(resetsAt, totalWindowHours) {
 }
 
 function getFiveHourBadgeData(utilization, resetsAt) {
-    const expected = calculateExpectedUtilization(resetsAt, 5);
+    const expected = calculateExpectedUtilization(resetsAt, WINDOW_HOURS_FIVE);
 
     if (expected === null) {
         if (utilization >= 100) return { color: '#F44336', show: true };
@@ -113,7 +115,7 @@ function getFiveHourBadgeData(utilization, resetsAt) {
 }
 
 function getSevenDayBadgeData(utilization, resetsAt) {
-    const expected = calculateExpectedUtilization(resetsAt, 168);
+    const expected = calculateExpectedUtilization(resetsAt, WINDOW_HOURS_SEVEN_DAYS);
 
     if (expected === null) {
         if (utilization >= 100) return { color: '#F44336', show: true };
