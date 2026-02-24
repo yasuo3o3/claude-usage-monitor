@@ -67,13 +67,25 @@ body {
   background-color: var(--progress-bg);
   border-radius: 4px;
   overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-expected {
+  position: absolute;
+  height: 100%;
+  background-color: rgba(76, 175, 80, 0.15);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  z-index: 0;
 }
 
 .progress-bar {
+  position: relative;
   height: 100%;
   background: var(--success);
   border-radius: 4px;
   transition: width 0.3s ease, background-color 0.3s ease;
+  z-index: 1;
 }
 
 .progress-info {
